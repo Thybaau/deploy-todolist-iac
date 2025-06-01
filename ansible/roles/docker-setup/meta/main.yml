@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Thibault CAREMELLE
+  description: Setup Docker on a host
+  company: none
+  license: MIT
+  min_ansible_version: 2.1
