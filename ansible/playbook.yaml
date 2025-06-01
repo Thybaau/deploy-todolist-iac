@@ -1,0 +1,13 @@
+---
+- name: Setup Kubernetes cluster locally
+  hosts: master
+  become: true
+  roles:
+    - k8s-setup
+
+# - name: Test du rôle docker
+#   hosts: localhost
+#   become: true
+#   connection: local
+#   roles:
+#     - docker-setup
