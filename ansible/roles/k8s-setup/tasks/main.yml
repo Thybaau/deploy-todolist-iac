@@ -1,0 +1,5 @@
+---
+# tasks file for k8s-setup
+- name: Include docker role
+  include_role:
+    name: docker-setup
