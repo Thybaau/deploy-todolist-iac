@@ -4,10 +4,8 @@
   become: true
   roles:
     - k8s-setup
+  tasks:
+    - name: Show IP address
+      ansible.builtin.debug:
+        msg: "Default IP : {{ ansible_default_ipv4.address }}"
 
-# - name: Test du rôle docker
-#   hosts: localhost
-#   become: true
-#   connection: local
-#   roles:
-#     - docker-setup
