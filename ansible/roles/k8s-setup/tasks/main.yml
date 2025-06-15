@@ -82,18 +82,18 @@
 
 - name: Create .kube directory
   file:
-    path: "/home/{{ kube_user }}/.kube"
+    path: "/home/{{ ansible_user }}/.kube"
     state: directory
     mode: '0700'
-    owner: "{{ kube_user }}"
-    group: "{{ kube_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy Kubernetes admin.conf to .kube/config
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: "/home/{{ kube_user }}/.kube/config"
-    owner: "{{ kube_user }}"
-    group: "{{ kube_user }}"
+    dest: "/home/{{ ansible_user }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0644'
     remote_src: yes
   become: true
@@ -102,12 +102,11 @@
 - name: Create Tigera Operator (CRDs and operator deployment)
   ansible.builtin.command:
     cmd: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{ calico_version }}/manifests/tigera-operator.yaml
+  become: true
+  become_user: "{{ ansible_user }}"
   register: tigera_operator
-  changed_when: "'created' in tigera_operator.stdout"
-  retries: 5
-  delay: 5
-  until: tigera_operator.rc == 0
-  become_user: "{{ kube_user }}"
+  failed_when: >
+    tigera_operator.rc != 0 and 'already exists' not in (tigera_operator.stderr | default(''))
 
 - name: Render Calico custom resources template
   ansible.builtin.template:
@@ -118,8 +117,8 @@
 - name: Create Calico custom resources
   ansible.builtin.command:
     cmd: kubectl create -f /tmp/calico-custom-resources.yaml
-  register: calico_crds
-  changed_when: "'created' in calico_crds.stdout or 'configured' in calico_crds.stdout"
-  retries: 5
-  delay: 5
-  until: calico_crds.rc == 0
+  become: true
+  become_user: "{{ ansible_user }}"
+  register: custom_resources
+  failed_when: >
+    custom_resources.rc != 0 and 'already exists' not in (custom_resources.stderr | default(''))
