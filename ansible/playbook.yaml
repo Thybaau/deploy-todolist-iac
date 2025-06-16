@@ -1,9 +1,10 @@
 ---
-- name: Setup Kubernetes cluster locally
+- name: Setup Kubernetes and Helm
   hosts: master
   become: true
   roles:
     - k8s-setup
+    - helm-install
   tasks:
     - name: Show IP address
       ansible.builtin.debug:
