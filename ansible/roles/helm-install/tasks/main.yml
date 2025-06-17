@@ -10,3 +10,42 @@
     remote_src: true
   args:
     creates: /usr/local/bin/helm
+
+- name: Check if helm is installed and working
+  ansible.builtin.command: helm version --short
+  register: helm_check
+  changed_when: false
+  failed_when: helm_check.rc != 0
+
+- name: Ensure helm is installed
+  ansible.builtin.assert:
+    that:
+      - helm_check.rc == 0
+      - helm_check.stdout is search("v" + helm_version)
+    fail_msg: "Helm installation failed or version mismatch. Expected v{{ helm_version }}, got {{ helm_check.stdout }}."
+    success_msg: "Helm v{{ helm_version }} installed successfully."
+
+- name: Download and extract helmfile v{{ helmfile_version }}
+  ansible.builtin.unarchive:
+    src: "https://github.com/helmfile/helmfile/releases/download/v{{ helmfile_version }}/helmfile_{{ helmfile_version }}_linux_amd64.tar.gz"
+    dest: /usr/local/bin
+    extra_opts:
+      - helmfile
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+
+- name: Check if helmfile is installed and working
+  ansible.builtin.command: helmfile --version
+  register: helmfile_check
+  changed_when: false
+  failed_when: helmfile_check.rc != 0
+
+- name: Ensure helmfile is installed
+  ansible.builtin.assert:
+    that:
+      - helmfile_check.rc == 0
+      - helmfile_check.stdout is search("helmfile version " + helmfile_version)
+    fail_msg: "Helmfile installation failed or version mismatch. Expected v{{ helmfile_version }}, got {{ helmfile_check.stdout }}."
+    success_msg: "Helmfile v{{ helmfile_version }} installed successfully."
