@@ -94,7 +94,7 @@
     dest: "/home/{{ ansible_user }}/.kube/config"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0644'
+    mode: '0600'
     remote_src: yes
   become: true
 
