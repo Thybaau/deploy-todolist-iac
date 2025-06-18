@@ -1,12 +1,13 @@
 ---
 - name: Setup Kubernetes and Helm
   hosts: master
-  become: true
   roles:
     - k8s-setup
     - helm-install
   tasks:
-    - name: Show IP address
-      ansible.builtin.debug:
-        msg: "Default IP : {{ ansible_default_ipv4.address }}"
+    - name: Deploy ArgoCD with Helmfile
+      ansible.builtin.command:
+        cmd: helmfile apply
+        chdir: "{{ playbook_dir }}/../helmfile"
+      register: helmfile_output
 
