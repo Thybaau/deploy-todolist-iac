@@ -20,6 +20,7 @@
     name: containerd.io
     state: present
     update_cache: yes
+  become: true
 
 - name: Generate and modify containerd config with SystemdCgroup enabled
   ansible.builtin.shell: |
@@ -33,6 +34,7 @@
     name: containerd
     enabled: yes
     state: restarted
+  become: true
 
 # Setup Kubernetes components
 - name: Add Kubernetes repository GPG key
@@ -41,12 +43,14 @@
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  become: true
 
 - name: Add Kubernetes apt repository source
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/ /"
     state: present
     filename: kubernetes
+  become: true
 
 - name: Update apt cache
   ansible.builtin.apt:
