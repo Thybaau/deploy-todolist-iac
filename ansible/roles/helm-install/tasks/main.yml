@@ -25,6 +25,11 @@
     fail_msg: "Helm installation failed or version mismatch. Expected v{{ helm_version }}, got {{ helm_check.stdout }}."
     success_msg: "Helm v{{ helm_version }} installed successfully."
 
+- name: Install Helm diff plugin
+  ansible.builtin.command: helm plugin install https://github.com/databus23/helm-diff
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/share/helm/plugins/helm-diff"
+
 - name: Download and extract helmfile v{{ helmfile_version }}
   ansible.builtin.unarchive:
     src: "https://github.com/helmfile/helmfile/releases/download/v{{ helmfile_version }}/helmfile_{{ helmfile_version }}_linux_amd64.tar.gz"
