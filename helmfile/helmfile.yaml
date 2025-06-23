@@ -1,6 +1,8 @@
 repositories:
   - name: argo
     url: https://argoproj.github.io/argo-helm
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
 
 releases:
   - name: argocd
@@ -10,3 +12,11 @@ releases:
     version: "5.53.0"
     values:
       - installCRDs: true
+
+  - name: sealed-secrets
+    namespace: kube-system
+    createNamespace: true
+    chart: bitnami/sealed-secrets
+    version: "2.5.15"
+    values:
+      - fullnameOverride: sealed-secrets-controller

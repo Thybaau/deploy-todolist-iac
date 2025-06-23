@@ -5,9 +5,31 @@
     - k8s-setup
     - helm-install
   tasks:
-    - name: Deploy ArgoCD with Helmfile
+    - name: Deploy ArgoCD and Sealed Secrets with Helmfile
       ansible.builtin.command:
         cmd: helmfile apply
         chdir: "{{ playbook_dir }}/../helmfile"
       register: helmfile_output
+
+    - name: Download kubeseal binary
+      ansible.builtin.get_url:
+        url: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.30.0/kubeseal-0.30.0-linux-amd64.tar.gz
+        dest: /tmp/kubeseal.tar.gz
+        mode: '0644'
+      become: true
+
+    - name: Extract kubeseal binary
+      ansible.builtin.unarchive:
+        src: /tmp/kubeseal.tar.gz
+        dest: /tmp
+        remote_src: yes
+      become: true
+
+    - name: Move kubeseal to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/kubeseal
+        dest: /usr/local/bin/kubeseal
+        mode: '0755'
+        remote_src: yes
+      become: true
 
