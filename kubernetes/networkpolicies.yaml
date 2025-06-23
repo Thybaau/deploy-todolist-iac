@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: todolist-backend
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: todolist-frontend
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-db
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: todolist-db
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: todolist-backend
+  policyTypes:
+    - Ingress
