@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todolist-db
+  labels:
+    app: todolist-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist-db
+  template:
+    metadata:
+      labels:
+        app: todolist-db
+    spec:
+      containers:
+        - name: postgres
+          image: thybau/todolist-db:1.0
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: database
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: db-storage
+          emptyDir: {}  # Pour l'instant, pas de stockage persistant

@@ -1,0 +1,25 @@
+# frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todolist-frontend
+  labels:
+    app: todolist-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todolist-frontend
+  template:
+    metadata:
+      labels:
+        app: todolist-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: thybau/todolist-frontend:1.0
+          ports:
+            - containerPort: 80
+          env:
+            - name: API_HOST
+              value: "backend-service"
