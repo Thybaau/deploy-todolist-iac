@@ -8,7 +8,7 @@
     - name: Deploy ArgoCD and Sealed Secrets with Helmfile
       ansible.builtin.command:
         cmd: helmfile apply
-        chdir: "{{ playbook_dir }}/../helmfile"
+        chdir: "{{ playbook_dir }}/.."
       register: helmfile_output
 
     - name: Download kubeseal binary
